@@ -38,9 +38,7 @@
                         $('#customerDetails').text('No additional information available.');
                     }
 
-        @* if (isAdmin) { *@
                         $('#editButtonContainer').html('<a href="/Customers/EditAPI/' + customerId + '" class="btn btn-primary">Edit</a>');
-        @*}*@
                         },
                 error: function (xhr, status, error) {
                     var errorMessage = xhr.status + ': ' + xhr.statusText;

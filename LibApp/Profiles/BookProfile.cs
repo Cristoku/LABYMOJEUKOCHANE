@@ -12,8 +12,8 @@ namespace LibApp.Profiles
                 .ForMember(dto => dto.Genre, opt => opt.MapFrom(book => book.Genre));
 
             CreateMap<BookDto, Book>()
-                .ForMember(book => book.Genre, opt => opt.Ignore()) // Assuming you manage Genre separately and only need GenreId from the DTO
-                .ForMember(book => book.DateAdded, opt => opt.Ignore()); // DateAdded is likely set only upon creation and not updated through DTO
+                .ForMember(book => book.Genre, opt => opt.Ignore()) 
+                .ForMember(book => book.DateAdded, opt => opt.Ignore()); 
         }
     }
 }

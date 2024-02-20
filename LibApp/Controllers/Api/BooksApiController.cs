@@ -1,5 +1,8 @@
-﻿using LibApp.Models;
+﻿using AutoMapper;
+using LibApp.Dtos;
+using LibApp.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace LibApp.Controllers.Api
 {
@@ -23,5 +26,4 @@ namespace LibApp.Controllers.Api
             var books = await response.Content.ReadFromJsonAsync<IEnumerable<Book>>();
             return Ok(books);
         }
-    }
 }

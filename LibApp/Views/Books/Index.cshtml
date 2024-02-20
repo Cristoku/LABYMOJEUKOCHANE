@@ -13,36 +13,38 @@
 
 <table id="booksTable" class="table table-bordered table-hover">
     <thead>
-    <tr>
-        <th>Book</th>
-        <th>Genre</th>
-        <th>Actions</th>
-    </tr>
+        <tr>
+            <th>Title</th>
+            <th>Genre</th>
+            <th>Actions</th>
+        </tr>
     </thead>
     <tbody>
     </tbody>
 </table>
 
 @section Scripts {
+    <script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
     <script>
         $(document).ready(function () {
-            $.ajax({
-                url: '/api/BooksApi',
-                method: 'GET',
-                success: function (data) {
-                    var table = $('#booksTable tbody');
-                    $.each(data, function (i, book) {
-                        var row = '<tr>' +
-                            '<td><a href="/Books/Edit/' + book.id + '">' + book.title + '</a></td>' +
-                            '<td>' + book.genre.name + '</td>' +
-                            '<td><a href="/Books/Details/' + book.id + '">Details</a></td>' +
-                            '</tr>';
-                        table.append(row);
-                    });
+            $('#booksTable').DataTable({
+                "ajax": {
+                    "url": "/api/booksapi",
+                    "dataSrc": ""
                 },
-                error: function (error) {
-                    console.error("Error fetching books: ", error);
-                }
+                "columns": [
+                    {
+                        "data": "title", "render": function (data, type, row) {
+                            return '<a href="/Books/Edit/' + row.id + '">' + data + '</a>';
+                        }
+                    },
+                    { "data": "genre.name" },
+                    {
+                        "data": "id", "render": function (data, type, row) {
+                            return '<a class="btn btn-info" href="/Books/Details/' + data + '">Details</a>';
+                        }
+                    },
+                ]
             });
         });
     </script>

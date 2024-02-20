@@ -12,7 +12,7 @@ namespace LibApp.Controllers
 {
     public class CustomersController : Controller
     {
-        // DbContext will be polled through Dependency Injection
+
         public CustomersController(ApplicationDbContext dbContext)
         {
             _context = dbContext;
@@ -23,7 +23,7 @@ namespace LibApp.Controllers
             //var customers = _context.Customers.Include(c => c.MembershipType).ToList();
             //return View(customers);
 
-            return View(); // Data is polled from API controller using ajax request
+            return View();
         }
 
         //public IActionResult Details(int id)
