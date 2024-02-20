@@ -3,48 +3,58 @@
     ViewBag.Title = "Customer Details";
 }
 
-<h2 id="customerName">Loading...</h2> <!-- Placeholder for customer name -->
+<h2 id="customerName">Loading...</h2>
 <ul id="customerDetails">
-    <!-- Customer details will be loaded here by AJAX -->
 </ul>
+<!--Test-->
+<div id="editButtonContainer">
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            var customerId = window.location.pathname.split('/').pop();
+            var isAdmin = @Html.Raw(Json.Serialize(User.IsInRole("Admin")));
+
+            $.ajax({
+                url: `/api/Customers/${customerId}`,
+                method: 'GET',
+                success: function (customer) {
+                    $('#customerName').text(customer.name);
+                    var details = '';
+
+                    if (customer.membershipType && customer.membershipType.discountRate) {
+                        details += `<li>Discount rate: ${customer.membershipType.discountRate}</li>`;
+                    }
+
+                    if (customer.birthdate) {
+                        var birthdate = new Date(customer.birthdate).toLocaleDateString();
+                        details += `<li>Birthdate: ${birthdate}</li>`;
+                    }
+
+                    if (details) {
+                        $('#customerDetails').html(details);
+                    } else {
+                        $('#customerDetails').text('No additional information available.');
+                    }
+
+        @* if (isAdmin) { *@
+                        $('#editButtonContainer').html('<a href="/Customers/EditAPI/' + customerId + '" class="btn btn-primary">Edit</a>');
+        @*}*@
+                        },
+                error: function (xhr, status, error) {
+                    var errorMessage = xhr.status + ': ' + xhr.statusText;
+                    console.error('Error - ' + errorMessage);
+                    $('#customerName').text('Customer details could not be loaded.');
+                }
+            });
+        });
+
+    </script>
+}
 
 @if (User.IsInRole("Admin"))
 {
     <div id="editButtonContainer">
-        <!-- "Edit" button will be inserted here for Admin users -->
     </div>
-}
-
-@section Scripts {
-    <script>
-        $(document).ready(function() {
-            var customerId = window.location.pathname.split('/').pop(); // Extracting customer ID from URL
-
-            $.ajax({
-                url: `/api/Customers/${customerId}`, // Adjust the URL based on your API route
-                method: 'GET',
-                success: function(customer) {
-                    $('#customerName').text(customer.name); // Setting the customer name
-                    var details = `<li>Discount rate: ${customer.membershipType.discountRate}</li>`; // Constructing the details list
-
-                    if (customer.birthdate) {
-                        var birthdate = new Date(customer.birthdate).toLocaleDateString(); // Formatting the birthdate
-                        details += `<li>Birthdate: ${birthdate}</li>`;
-                    }
-
-                    $('#customerDetails').html(details); // Injecting the details into the page
-                },
-                error: function() {
-                    $('#customerName').text('Customer details could not be loaded.'); // Error handling
-                }
-            });
-            </script>
-            @if (User.IsInRole("Admin"))
-            {
-                <script>
-                // Dynamically adding the "Edit" button for Admin users
-                $('#editButtonContainer').html('<a href="/Customers/EditAPI/' + customerId + '" class="btn btn-primary">Edit</a>');
-                </script>
-            }
-        });
 }

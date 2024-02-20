@@ -1,104 +1,27 @@
-﻿using LibApp.Data;
-using LibApp.Models;
+﻿using LibApp.Models;
 using Microsoft.AspNetCore.Mvc;
-using AutoMapper;
-using LibApp.Dtos;
-using Microsoft.EntityFrameworkCore;
-using System.Linq;
 
 namespace LibApp.Controllers.Api
 {
-    [Route("api/[controller]")]
+    [Route("api/booksapi")]
     [ApiController]
     public class BooksApiController : ControllerBase
     {
-        private readonly ApplicationDbContext _context;
-        private readonly IMapper _mapper;
+        private readonly IHttpClientFactory _httpClientFactory;
 
-        public BooksApiController(ApplicationDbContext context, IMapper mapper)
+        public BooksApiController(IHttpClientFactory httpClientFactory)
         {
-            _context = context;
-            _mapper = mapper;
+            _httpClientFactory = httpClientFactory;
         }
 
-        // GET /api/books
         [HttpGet]
-        public IActionResult GetBooks()
+        public async Task<ActionResult<IEnumerable<Book>>> GetBooks()
         {
-            var books = _context.Books
-                .Include(b => b.Genre)
-                .ToList()
-                .Select(_mapper.Map<Book, BookDto>);
+            var client = _httpClientFactory.CreateClient();
+            var response = await client.GetAsync("https://localhost:7192/Controllers/api/booksapi");
+            response.EnsureSuccessStatusCode();
+            var books = await response.Content.ReadFromJsonAsync<IEnumerable<Book>>();
             return Ok(books);
-        }
-
-        // GET /api/books/{id}
-        [HttpGet("{id}", Name = "GetBook")]
-        public IActionResult GetBook(int id)
-        {
-            var book = _context.Books
-                .Include(b => b.Genre)
-                .SingleOrDefault(b => b.Id == id);
-
-            if (book == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(_mapper.Map<BookDto>(book));
-        }
-
-        // POST /api/books
-        [HttpPost]
-        public IActionResult CreateBook(BookDto bookDto)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest();
-            }
-
-            var book = _mapper.Map<Book>(bookDto);
-            _context.Books.Add(book);
-            _context.SaveChanges();
-
-            return CreatedAtRoute(nameof(GetBook), new { id = book.Id }, bookDto);
-        }
-
-        // PUT /api/books/{id}
-        [HttpPut("{id}")]
-        public IActionResult UpdateBook(int id, BookDto bookDto)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest();
-            }
-
-            var bookInDb = _context.Books.SingleOrDefault(b => b.Id == id);
-            if (bookInDb == null)
-            {
-                return NotFound();
-            }
-
-            _mapper.Map(bookDto, bookInDb);
-            _context.SaveChanges();
-
-            return Ok(bookDto);
-        }
-
-        // DELETE /api/books/{id}
-        [HttpDelete("{id}")]
-        public IActionResult DeleteBook(int id)
-        {
-            var bookInDb = _context.Books.SingleOrDefault(b => b.Id == id);
-            if (bookInDb == null)
-            {
-                return NotFound();
-            }
-
-            _context.Books.Remove(bookInDb);
-            _context.SaveChanges();
-
-            return Ok(bookInDb);
         }
     }
 }

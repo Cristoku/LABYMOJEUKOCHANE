@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using AutoMapper;
 using LibApp.Dtos;
+using LibApp.ViewModels;
 using Microsoft.EntityFrameworkCore;
 
 namespace LibApp.Controllers.Api
@@ -34,7 +35,7 @@ namespace LibApp.Controllers.Api
         public IActionResult GetCustomer(int id)
         {
             var customer = _context.Customers.SingleOrDefault(c => c.Id == id);
-            if (customer == null) 
+            if (customer == null)
             {
                 return NotFound();
             }
@@ -91,6 +92,7 @@ namespace LibApp.Controllers.Api
 
             return Ok(customerInDb);
         }
+
 
         private ApplicationDbContext _context;
         private IMapper _mapper;

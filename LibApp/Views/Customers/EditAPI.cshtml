@@ -1,1 +1,52 @@
-﻿
+﻿﻿@model LibApp.Models.Customer
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Edit Customer";
+}
+
+<h2>Edit Customer</h2>
+
+<form id="editCustomerForm">
+    <input type="hidden" id="customerId" value="@Model.Id" />
+
+    <div class="form-group">
+        <label for="name">Name</label>
+        <input type="text" id="name" class="form-control" value="@Model.Name" />
+    </div>
+
+    <div class="form-group">
+        <label for="birthdate">Birthdate</label>
+        <input type="date" id="birthdate" class="form-control" value="@Model.Birthdate?.ToString("yyyy-MM-dd")" />
+    </div>
+
+    <!-- Add other fields as necessary... -->
+
+    <button type="submit" class="btn btn-primary">Save</button>
+</form>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            $('#editCustomerForm').submit(function(e) {
+                e.preventDefault();
+
+                var customerId = $('#customerId').val();
+                var updateData = {
+                    id: customerId,
+                    name: $('#name').val(),
+                    birthdate: $('#birthdate').val(),
+                    // Map other fields as necessary...
+                };
+
+                $.ajax({
+                    url: `/api/Customers/${customerId}`,
+                    method: 'PUT',
+                    contentType: 'application/json',
+                    data: JSON.stringify(updateData),
+                    success: function(result) {
+                        console.log('Customer updated:', result);
+                        // Redirect or inform the user of success
+                    }
+                    </script>
+    });

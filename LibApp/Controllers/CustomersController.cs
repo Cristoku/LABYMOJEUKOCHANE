@@ -26,18 +26,23 @@ namespace LibApp.Controllers
             return View(); // Data is polled from API controller using ajax request
         }
 
-        public IActionResult Details(int id)
+        //public IActionResult Details(int id)
+        //{
+        //    var customer = _context.Customers
+        //        .Include(c => c.MembershipType)
+        //        .SingleOrDefault(c => c.Id == id);
+
+        //    if (customer == null)
+        //    {
+        //        return Content("User not found");
+        //    }
+
+        //    return View(customer);
+        //}
+
+        public IActionResult DetailsAPI(int id)
         {
-            var customer = _context.Customers
-                .Include(c => c.MembershipType)
-                .SingleOrDefault(c => c.Id == id);
-
-            if (customer == null)
-            {
-                return Content("User not found");
-            }
-
-            return View(customer);
+            return View();
         }
 
         public IActionResult CustomerForm()
@@ -48,6 +53,13 @@ namespace LibApp.Controllers
             };
 
             return View(viewModel);
+        }
+
+
+
+        public IActionResult EditAPI(Customer id)
+        {
+            return View(id);
         }
 
         [HttpPost]
