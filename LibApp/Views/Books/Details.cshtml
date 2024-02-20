@@ -1,49 +1,16 @@
-﻿@model LibApp.Models.Customer
+﻿@model LibApp.Models.Book
 
 @{
-    ViewBag.Title = "Customer Details";
+    ViewBag.Title = Model.Title;
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Details for @Model.Name</h2>
-
-<dl class="dl-horizontal">
-    <dt>Name</dt>
-    <dd>@Model.Name</dd>
-
-    <dt>Membership Type</dt>
-    <dd>@Model.MembershipType.Name</dd>
-</dl>
-
-@if (User.IsInRole("CanEditCustomer"))
-{
-    <a class="btn btn-primary" href="@Url.Action("Edit", "Customers", new { id = Model.Id })">Edit</a>
-}
-
-@Html.AntiForgeryToken()
-
-@section Scripts {
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            document.getElementById('commentForm').addEventListener('submit', function (e) {
-                e.preventDefault();
-                var comment = document.getElementById('commentInput').value;
-                if (!comment) {
-                    alert('Comment cannot be empty.');
-                    return false;
-                }
-               
-                axios.post('/api/comments', { comment: comment, customerId: '@Model.Id' })
-                    .then(function (response) {
-                        console.log(response);
-                        
-                    })
-                    .catch(function (error) {
-                        console.log(error);
-                      
-                    });
-            });
-        });
-    </script>
-}
+<h2>@Model.Title</h2>
+<ul>
+    <li>Author: @Model.Author</li>
+    <li>Genre: @Model.Genre.Name</li>
+    @if (Model.ReleaseDate.HasValue)
+    {
+        <li>Release date: @Model.ReleaseDate.Value.ToShortDateString()</li>
+    }
+</ul>

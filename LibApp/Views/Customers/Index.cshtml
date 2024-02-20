@@ -5,6 +5,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+@* jQuery tutorial - https://www.impressivewebs.com/jquery-tutorial-for-beginners/*@
 
 <h2>Customers</h2>
 <a class="btn btn-primary" asp-action="CustomerForm">New Customer</a>
@@ -27,15 +28,14 @@
         $(document).ready(function () {
             $('#customers').DataTable({
                 ajax: {
-                    url: "/api/customers",
+                    url: "api/customers",
                     dataSrc: ""
                 },
                 columns: [
                     {
                         data: "name",
                         render: function (data, type, customer) {
-                            // Updated the href to point to the Details view
-                            return "<a href='/Customers/Details/" + customer.id + "'>" + customer.name + "</a>";
+                            return "<a href='customers/edit/" + customer.id + "'>" + customer.name + "</a>";
                         }
                     },
                     {

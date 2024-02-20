@@ -1,0 +1,50 @@
+﻿﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Customer Details";
+}
+
+<h2 id="customerName">Loading...</h2> <!-- Placeholder for customer name -->
+<ul id="customerDetails">
+    <!-- Customer details will be loaded here by AJAX -->
+</ul>
+
+@if (User.IsInRole("Admin"))
+{
+    <div id="editButtonContainer">
+        <!-- "Edit" button will be inserted here for Admin users -->
+    </div>
+}
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            var customerId = window.location.pathname.split('/').pop(); // Extracting customer ID from URL
+
+            $.ajax({
+                url: `/api/Customers/${customerId}`, // Adjust the URL based on your API route
+                method: 'GET',
+                success: function(customer) {
+                    $('#customerName').text(customer.name); // Setting the customer name
+                    var details = `<li>Discount rate: ${customer.membershipType.discountRate}</li>`; // Constructing the details list
+
+                    if (customer.birthdate) {
+                        var birthdate = new Date(customer.birthdate).toLocaleDateString(); // Formatting the birthdate
+                        details += `<li>Birthdate: ${birthdate}</li>`;
+                    }
+
+                    $('#customerDetails').html(details); // Injecting the details into the page
+                },
+                error: function() {
+                    $('#customerName').text('Customer details could not be loaded.'); // Error handling
+                }
+            });
+            </script>
+            @if (User.IsInRole("Admin"))
+            {
+                <script>
+                // Dynamically adding the "Edit" button for Admin users
+                $('#editButtonContainer').html('<a href="/Customers/EditAPI/' + customerId + '" class="btn btn-primary">Edit</a>');
+                </script>
+            }
+        });
+}
