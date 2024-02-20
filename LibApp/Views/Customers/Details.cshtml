@@ -1,0 +1,50 @@
+﻿@model LibApp.Models.Customer
+
+@{
+    ViewBag.Title = Model.Name;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>@Model.Name</h2>
+<div>
+    <ul>
+        <li>Membership Type: @Model.MembershipType.Name</li>
+        @if (Model.Birthdate.HasValue)
+        {
+            <li>Birthdate: @Model.Birthdate.Value.ToString("d")</li>
+        }
+        <li>Newsletter Subscription: @(Model.HasNewsletterSubscribed ? "Yes" : "No")</li>
+    </ul>
+</div>
+
+@if (User.IsInRole("Admin"))
+{
+    <a class="btn btn-default" href="@Url.Action("Edit", "Customers", new { id = Model.Id })">Edit</a>
+}
+
+@section Scripts {
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            var bookId = @Model.Id;
+            $.ajax({
+                url: '/api/booksapi/' + bookId,
+                type: 'GET',
+                dataType: 'json',
+                success: function (book) {                
+                    $('#bookTitle').text(book.title);
+                    $('#bookDetails').html(
+                        '<ul>' +
+                        '<li>Author: ' + book.author + '</li>' +
+                        '<li>Genre: ' + book.genre.name + '</li>' +
+                        '<li>Release date: ' + new Date(book.releaseDate).toLocaleDateString() + '</li>' +                     
+                        '</ul>'
+                    );
+                },
+                error: function () {
+                    $('#bookDetails').html('<p>Error loading book details.</p>');
+                }
+            });
+        });
+    </script>
+}
